@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Bootstrap Example</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+</head>
+<body>
+
+<div class="container">
+  <h2>Striped Rows</h2>
+<p> completed : <span id="completed"> </span> </p>
+ <div class="progress">
+    <div class="progress-bar" role="progressbar" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100" >
+    </div>
+  </div>
+
+
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Address</th>
+        <th>Age</th>
+
+      </tr>
+    </thead>
+    <tbody  id="table_data">
+      
+      
+    </tbody>
+  </table>
+  <script>
+    var url = 'ws://localhost:8000/ws/new/'
+
+    var socket = new WebSocket(url)
+
+    socket.onopen = function(e){
+        console.log("socket connected")
+    }
+
+    socket.onmessage = function(e){
+        var data = JSON.parse(e.data)
+        console.log(data)
+        if(data.payload){
+            addData(data.payload)
+            increaseProgress(data.payload.total,data.payload.current_total)
+        }
+    }
+
+    
+    socket.onclose = function(e){
+        console.log("socket close")
+    }
+
+    function addData(data){
+        var html = `<tr>
+                        <th scope> ${ data.id } </th> 
+                        <th scope> ${ data.student_name } </th> 
+                        <th scope> ${ data.student_email } </th> 
+                        <th scope> ${ data.student_address } </th> 
+                        <th scope> ${ data.student_age } </th> 
+                    </tr>`
+        document.getElementById('table_data').innerHTML += html
+    }
+
+    function increaseProgress(total,current_total){
+        console.log("yessss")
+            var element = document.querySelector(".progress-bar")
+            var percent = (current_total / total ) * 100
+            document.getElementById('completed').innerHTML = percent + '%'
+            element.style.width = percent + '%'
+    }
+
+  </script>
+</div>
+
+</body>
+</html>
